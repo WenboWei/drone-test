@@ -1,17 +1,15 @@
-workspace:
-  base: /srv/dronetest2
-  path: .
+---
+kind: pipeline
+type: docker
+name: default
 
-pipeline:
-  build:
-     image: golang:alpine
-     # pull: true
-     environment:
-       - KEY=VALUE
-     secrets: [key1, key2]
-     commands:
-       - echo $$KEY
-       - pwd
-       - ls
-       - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
-       - ./app
+steps:
+- name: build
+  image: golang
+  environment:
+    A_SECRET:
+      from_secret: a_secret
+  commands:
+  - echo ?A_SECRET
+  - go run . > test_secret.txt
+  - cat test_secret.txt
